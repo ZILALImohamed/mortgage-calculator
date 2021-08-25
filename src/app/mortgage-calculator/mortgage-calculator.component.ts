@@ -1,13 +1,16 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {PaymentFrequencies, PaymentFrequency, PrePaymentFrequencies, PrePaymentFrequency} from "../core/interfaces";
+import {getMonthlyPayments, getPaymentFrequency} from "../core/util";
 
 @Component({
   selector: 'app-mortgage-calculator',
   templateUrl: './mortgage-calculator.component.html',
   styleUrls: ['./mortgage-calculator.component.css']
 })
-export class MortgageCalculatorComponent implements OnInit {
+export class MortgageCalculatorComponent implements AfterViewInit {
+  @Input() summary: any;
+  @Output() summaryChange = new EventEmitter<any>();
 
   mortgageCalculatorFormGroup: FormGroup;
   amortizationPeriodYearsList = Array.from({length: 30}, (_, i) => i + 1);
@@ -27,13 +30,25 @@ export class MortgageCalculatorComponent implements OnInit {
       prepaymentAmount: new FormControl(0, Validators.required),
       prepaymentFrequency: new FormControl(PrePaymentFrequency.OneTime, Validators.required),
       startWithPayment: new FormControl(1, Validators.required),
-    })
+    });
   }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
+    this.submit();
   }
 
   submit(): void {
-    console.log(this.mortgageCalculatorFormGroup.getRawValue());
+    const term = this.mortgageCalculatorFormGroup.get('term')?.value;
+    const paymentFrequency = getPaymentFrequency(this.mortgageCalculatorFormGroup.get('paymentFrequency')?.value);
+    const mortgageAmount = this.mortgageCalculatorFormGroup.get('mortgageAmount')?.value;
+    const interestRate = this.mortgageCalculatorFormGroup.get('interestRate')?.value / 100;
+    const amortizationPeriod = this.mortgageCalculatorFormGroup.get('amortizationPeriodYears')?.value * 12
+      + this.mortgageCalculatorFormGroup.get('amortizationPeriodMonths')?.value;
+
+    this.summaryChange.emit({
+      prepayment: this.mortgageCalculatorFormGroup.get('prepaymentAmount')?.value,
+      monthlyPayment: getMonthlyPayments(mortgageAmount, interestRate / 12, amortizationPeriod),
+      numberOfPaymentTerm: term * paymentFrequency
+    })
   }
 }

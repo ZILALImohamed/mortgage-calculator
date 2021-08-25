@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {ISummary} from "../core/interfaces";
 
 @Component({
   selector: 'app-calculation-summary-table',
@@ -6,10 +7,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./calculation-summary-table.component.css']
 })
 export class CalculationSummaryTableComponent implements OnInit {
+  @Input() summary!: ISummary;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
   }
-
 }

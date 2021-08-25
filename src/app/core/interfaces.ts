@@ -28,3 +28,8 @@ export enum PrePaymentFrequency {
   SameAsRegularPayment = 'SameAsRegularPayment',
 }
 
+export interface ISummary {
+  numberOfPaymentTerm: number;
+  monthlyPayment: number;
+  prepayment: number;
+}

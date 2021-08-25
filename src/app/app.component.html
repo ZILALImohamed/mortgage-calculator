@@ -1,5 +1,5 @@
 <div class="container">
-  <app-mortgage-calculator></app-mortgage-calculator>
+  <app-mortgage-calculator [(summary)]="summary"></app-mortgage-calculator>
 
-  <app-calculation-summary-table></app-calculation-summary-table>
+  <app-calculation-summary-table [summary]="summary"></app-calculation-summary-table>
 </div>
